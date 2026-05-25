@@ -70,10 +70,16 @@ const AIChatbot = () => {
     setMessages(prev => [...prev, { role: 'bot', text: '...', isTyping: true }]);
 
     try {
-      const response = await api.post('/ai/chatbot.php', {
-        message: userText,
-        history: messages.map(m => ({ role: m.role, text: m.text })),
-      });
+      // Filter out typing placeholders so they are never sent to the backend
+      const cleanHistory = messages
+        .filter(m => !m.isTyping)
+        .map(m => ({ role: m.role, text: m.text }));
+
+      const response = await api.post(
+        '/ai/chatbot.php',
+        { message: userText, history: cleanHistory },
+        { timeout: 25000 } // Gemini + DB query can take up to ~15 s
+      );
 
       const { reply, quickReplies: qr } = response.data.data;
       setMessages(prev => [
@@ -83,11 +89,16 @@ const AIChatbot = () => {
       if (qr?.length) setQuickReplies(qr);
 
       if (!isOpen) setUnread(u => u + 1);
-    } catch {
+    } catch (err) {
+      // Try to surface any reply the backend included in an error response
+      const fallbackReply =
+        err?.response?.data?.data?.reply ||
+        "😔 Sorry, I'm having trouble connecting. Please try again or contact admin at **admin@etgebeya.com**.";
       setMessages(prev => [
         ...prev.filter(m => !m.isTyping),
-        { role: 'bot', text: "😔 Sorry, I'm having trouble connecting. Please try again or contact admin at **admin@etgebeya.com**." },
+        { role: 'bot', text: fallbackReply },
       ]);
+      setQuickReplies(['Try again', 'Contact admin']);
     } finally {
       setLoading(false);
     }
