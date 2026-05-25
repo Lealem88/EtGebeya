@@ -72,7 +72,19 @@ const SellerProfilePage = () => {
                 {seller.name}
                 {seller.isVerified && <HiOutlineShieldCheck className="w-6 h-6 text-success-500" title="Verified Seller" />}
               </h1>
-              <Rating value={seller.trustScore} count={seller.totalRatings} size="md" showValue />
+              <Rating value={seller.trustScore || 0} count={seller.totalRatings || 0} size="md" showValue />
+            </div>
+
+            {/* AI Trust Badge */}
+            <div className="flex justify-center md:justify-start mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-primary-50 to-accent-50 dark:from-primary-900/30 dark:to-accent-900/30 border border-primary-200 dark:border-primary-800/50 rounded-lg shadow-sm">
+                <HiOutlineShieldCheck className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                <span className="text-sm font-bold text-surface-900 dark:text-white">Trust Score:</span>
+                <span className="text-sm font-black text-primary-600 dark:text-primary-400">{seller.trustScore || 50}/100</span>
+                <span className="text-xs font-semibold px-2 py-0.5 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded uppercase">
+                  {seller.trustScore >= 90 ? 'Platinum' : seller.trustScore >= 75 ? 'Gold' : seller.trustScore >= 60 ? 'Silver' : 'Bronze'}
+                </span>
+              </div>
             </div>
             
             <p className="text-surface-600 dark:text-surface-300 max-w-2xl mx-auto md:mx-0 mb-4">

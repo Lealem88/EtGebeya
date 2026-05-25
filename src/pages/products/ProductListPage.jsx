@@ -9,6 +9,7 @@ import EmptyState from '../../components/common/EmptyState';
 import Modal from '../../components/common/Modal';
 import { setFilters, setProducts } from '../../store/productSlice';
 import productService from '../../services/productService';
+import api from '../../services/api';
 
 const ProductListPage = () => {
   const dispatch = useDispatch();
@@ -33,15 +34,24 @@ const ProductListPage = () => {
     }
   }, [searchParams, dispatch]);
 
-  // Fetch products (Mock API call)
+  // Fetch products (AI Smart Search or All)
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const data = await productService.getAll();
-        dispatch(setProducts(data));
-        // Re-apply filters after fetching
-        dispatch(setFilters(filters));
+        const search = searchParams.get('search');
+        if (search && search.trim() !== '') {
+          // Use AI Smart Search
+          const response = await api.get(`/ai/smart_search.php?q=${encodeURIComponent(search)}`);
+          if (response.data?.success) {
+            dispatch(setProducts(response.data.data.results));
+            // Optional: update filters with AI intent
+          }
+        } else {
+          // Standard fetch
+          const data = await productService.getAll();
+          dispatch(setProducts(data));
+        }
       } catch (error) {
         console.error('Failed to fetch products', error);
       } finally {
@@ -50,7 +60,7 @@ const ProductListPage = () => {
     };
     fetchProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams.get('search')]);
 
   const handleSortChange = (e) => {
     dispatch(setFilters({ sortBy: e.target.value }));

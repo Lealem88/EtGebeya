@@ -28,11 +28,11 @@ const ReportModal = ({ isOpen, onClose, productId, productTitle }) => {
 
     setIsSubmitting(true);
     try {
-      await reportService.create({
+      await reportService.submitReport(
         productId,
         reason,
         details
-      });
+      );
       toast.success('Report submitted successfully. Thank you for keeping our community safe.');
       onClose();
       // Reset form

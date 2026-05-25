@@ -19,6 +19,17 @@ const LoginPage = () => {
     password: '',
   });
   const [errors, setErrors] = useState({});
+  const [loginType, setLoginType] = useState('user'); // 'user' or 'admin'
+
+  const handleLoginTypeToggle = (type) => {
+    setLoginType(type);
+    if (type === 'admin') {
+      setFormData({ email: 'admin@etgebeya.com', password: 'password' });
+    } else {
+      setFormData({ email: '', password: '' });
+    }
+    setErrors({});
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,6 +82,32 @@ const LoginPage = () => {
         <p className="text-surface-500 dark:text-surface-400 text-sm">
           Sign in to your account to continue
         </p>
+      </div>
+
+      {/* Login Type Toggle */}
+      <div className="flex bg-surface-100 dark:bg-surface-800 p-1 rounded-xl mb-6">
+        <button
+          type="button"
+          onClick={() => handleLoginTypeToggle('user')}
+          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
+            loginType === 'user'
+              ? 'bg-white dark:bg-surface-900 text-primary-600 shadow-sm'
+              : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+          }`}
+        >
+          User Login
+        </button>
+        <button
+          type="button"
+          onClick={() => handleLoginTypeToggle('admin')}
+          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
+            loginType === 'admin'
+              ? 'bg-white dark:bg-surface-900 text-primary-600 shadow-sm'
+              : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+          }`}
+        >
+          Admin Login
+        </button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">

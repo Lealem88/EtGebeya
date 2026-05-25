@@ -8,8 +8,9 @@
  * @param {string} currency 
  * @returns {string}
  */
-export const formatPrice = (price, currency = '$') => {
-  return `${currency}${price.toLocaleString('en-US')}`;
+export const formatPrice = (price, currency = 'ETB ') => {
+  const convertedPrice = Number(price) * 120;
+  return `${currency}${convertedPrice.toLocaleString('en-US')}`;
 };
 
 /**

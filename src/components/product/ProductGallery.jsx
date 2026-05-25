@@ -5,14 +5,23 @@ const ProductGallery = ({ images, title }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
 
-  if (!images || images.length === 0) return null;
+  const safeImages = Array.isArray(images) && images.length > 0 ? images : null;
+
+  if (!safeImages) {
+    return (
+      <div className="aspect-square md:aspect-[4/3] bg-surface-100 dark:bg-surface-800 rounded-2xl flex flex-col items-center justify-center text-surface-400 dark:text-surface-600">
+        <span className="text-6xl mb-3">📷</span>
+        <p className="text-sm font-medium">ፎቶ አልተጨመረም (No photos)</p>
+      </div>
+    );
+  }
 
   const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev === 0 ? safeImages.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1));
   };
 
   return (
@@ -23,13 +32,13 @@ const ProductGallery = ({ images, title }) => {
         onClick={() => setIsZoomed(true)}
       >
         <img
-          src={images[currentIndex]}
+          src={safeImages[currentIndex]}
           alt={`${title} - Image ${currentIndex + 1}`}
           className="w-full h-full object-cover"
         />
         
         {/* Navigation Arrows (Desktop overlay) */}
-        {images.length > 1 && (
+        {safeImages.length > 1 && (
           <>
             <button
               onClick={(e) => { e.stopPropagation(); handlePrevious(); }}
@@ -48,9 +57,9 @@ const ProductGallery = ({ images, title }) => {
       </div>
 
       {/* Thumbnails */}
-      {images.length > 1 && (
+      {safeImages.length > 1 && (
         <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2 snap-x">
-          {images.map((img, index) => (
+          {safeImages.map((img, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}

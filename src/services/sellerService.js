@@ -1,40 +1,68 @@
-import sellersData from '../data/sellers.json';
-import productsData from '../data/products.json';
-
-/**
- * Seller Service — Mock API calls for seller profiles
- * 
- * BACKEND INTEGRATION NOTE:
- * Replace with actual Axios calls:
- * - GET /api/sellers/:id          → sellerService.getById(id)
- * - GET /api/sellers/:id/products → sellerService.getProducts(id)
- * - GET /api/sellers/:id/reviews  → sellerService.getReviews(id)
- */
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import api from './api';
 
 const sellerService = {
+  async getSellerById(id) {
+    const response = await api.get(`/sellers/show.php?id=${id}`);
+    if (response.data.success) return response.data.data;
+    throw new Error(response.data.message || 'Failed to fetch seller profile');
+  },
+
+  /** Alias used by SellerProfilePage */
   async getById(id) {
-    await delay(400);
-    const seller = sellersData.find(s => s.id === Number(id));
-    if (!seller) throw new Error('Seller not found');
-    return seller;
+    return this.getSellerById(id);
   },
 
-  async getProducts(sellerId) {
-    await delay(500);
-    return productsData.filter(p => p.sellerId === Number(sellerId));
+  /** Public profile - only returns active products */
+  async getSellerProducts(id) {
+    const response = await api.get(`/sellers/products.php?id=${id}`);
+    if (response.data.success) return response.data.data;
+    throw new Error(response.data.message || 'Failed to fetch seller products');
   },
 
-  async getReviews(sellerId) {
-    await delay(400);
-    // Mock reviews
-    return [
-      { id: 1, rating: 5, comment: "Great seller! Fast shipping and exactly as described.", author: "Alex R.", date: "2026-05-20" },
-      { id: 2, rating: 4, comment: "Good condition item. Communication could be faster.", author: "Maria K.", date: "2026-05-18" },
-      { id: 3, rating: 5, comment: "Excellent experience! Would buy again.", author: "James L.", date: "2026-05-15" },
-      { id: 4, rating: 5, comment: "Professional seller. Packed very carefully.", author: "Nina P.", date: "2026-05-12" },
-    ];
+  /** Alias used by SellerProfilePage */
+  async getProducts(id) {
+    return this.getSellerProducts(id);
+  },
+
+  /** Seller's own dashboard - returns ALL products including pending/rejected */
+  async getMyProducts(id) {
+    const response = await api.get(`/sellers/products.php?id=${id}&own=1`);
+    if (response.data.success) return response.data.data;
+    throw new Error(response.data.message || 'Failed to fetch your products');
+  },
+
+  async getSellerReviews(id) {
+    const response = await api.get(`/sellers/reviews.php?id=${id}`);
+    if (response.data.success) return response.data.data;
+    throw new Error(response.data.message || 'Failed to fetch seller reviews');
+  },
+
+  async getReviews(id) {
+    return this.getSellerReviews(id);
+  },
+
+  async rateSeller(sellerId, rating, comment = '') {
+    const response = await api.post('/sellers/rate.php', { sellerId, rating, comment });
+    if (response.data.success) return response.data;
+    throw new Error(response.data.message || 'Failed to rate seller');
+  },
+
+  async deleteProduct(productId) {
+    const response = await api.post('/products/delete.php', { productId });
+    if (response.data.success) return response.data;
+    throw new Error(response.data.message || 'Failed to delete product');
+  },
+
+  async markSold(productId) {
+    const response = await api.post('/products/mark-sold.php', { productId });
+    if (response.data.success) return response.data;
+    throw new Error(response.data.message || 'Failed to mark product as sold');
+  },
+
+  async updateProduct(productId, data) {
+    const response = await api.put(`/products/update.php?id=${productId}`, data);
+    if (response.data.success) return response.data;
+    throw new Error(response.data.message || 'Failed to update product');
   },
 };
 

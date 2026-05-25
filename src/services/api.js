@@ -9,12 +9,14 @@ import axios from 'axios';
  */
 
 const api = axios.create({
-  baseURL: '/api', // TODO: Replace with actual backend URL
+  baseURL: 'http://127.0.0.1/IP%20final%20project/backend/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+
 
 // Request interceptor — attach auth token
 api.interceptors.request.use(
@@ -35,7 +37,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Only redirect to login for 401s if the request wasn't the login request itself
+    if (error.response?.status === 401 && !error.config?.url?.includes('login.php')) {
       localStorage.removeItem('user');
       window.location.href = '/login';
     }

@@ -226,3 +226,16 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ========================================
+   ANIMATION UTILITIES
+   ======================================== */
+
+.animate-fade-in    { animation: var(--animate-fade-in); }
+.animate-slide-up   { animation: var(--animate-slide-up); }
+.animate-slide-down { animation: var(--animate-slide-down); }
+.animate-scale-in   { animation: var(--animate-scale-in); }
+.animate-bounce-in  { animation: var(--animate-bounce-in); }
+.animate-shimmer    { animation: var(--animate-shimmer); }
+.animate-pulse-soft { animation: var(--animate-pulse-soft); }
+

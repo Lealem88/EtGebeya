@@ -1,4 +1,3 @@
-import { createSlice } from '@reduxjs/toolkit';
 
 /**
  * Wishlist Slice
@@ -13,49 +12,72 @@ import { createSlice } from '@reduxjs/toolkit';
  * - DELETE /api/favorites/:productId (remove item)
  */
 
-const storedWishlist = localStorage.getItem('wishlist');
-const storedFavorites = localStorage.getItem('favorites');
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import wishlistService from '../services/wishlistService';
+
+export const fetchWishlist = createAsyncThunk(
+  'wishlist/fetch',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await wishlistService.getWishlist(); // returns array of IDs
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const toggleWishlistAPI = createAsyncThunk(
+  'wishlist/toggle',
+  async (productId, { rejectWithValue }) => {
+    try {
+      const response = await wishlistService.toggleWishlist(productId);
+      return { productId, action: response.action };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 const initialState = {
-  wishlistIds: storedWishlist ? JSON.parse(storedWishlist) : [],
-  favoriteIds: storedFavorites ? JSON.parse(storedFavorites) : [],
+  wishlistIds: [],
+  favoriteIds: [], // Used for sellers/brands if needed
+  loading: false,
 };
 
 const wishlistSlice = createSlice({
   name: 'wishlist',
   initialState,
   reducers: {
-    toggleWishlist(state, action) {
-      const productId = action.payload;
-      const index = state.wishlistIds.indexOf(productId);
-      if (index === -1) {
-        state.wishlistIds.push(productId);
-      } else {
-        state.wishlistIds.splice(index, 1);
-      }
-      localStorage.setItem('wishlist', JSON.stringify(state.wishlistIds));
-    },
-    toggleFavorite(state, action) {
-      const productId = action.payload;
-      const index = state.favoriteIds.indexOf(productId);
-      if (index === -1) {
-        state.favoriteIds.push(productId);
-      } else {
-        state.favoriteIds.splice(index, 1);
-      }
-      localStorage.setItem('favorites', JSON.stringify(state.favoriteIds));
-    },
     clearWishlist(state) {
       state.wishlistIds = [];
-      localStorage.removeItem('wishlist');
     },
-    clearFavorites(state) {
-      state.favoriteIds = [];
-      localStorage.removeItem('favorites');
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Fetch
+      .addCase(fetchWishlist.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchWishlist.fulfilled, (state, action) => {
+        state.loading = false;
+        state.wishlistIds = action.payload || [];
+      })
+      .addCase(fetchWishlist.rejected, (state) => {
+        state.loading = false;
+      })
+      // Toggle
+      .addCase(toggleWishlistAPI.fulfilled, (state, action) => {
+        const { productId, action: toggleAction } = action.payload;
+        if (toggleAction === 'added') {
+          if (!state.wishlistIds.includes(productId)) {
+            state.wishlistIds.push(productId);
+          }
+        } else if (toggleAction === 'removed') {
+          state.wishlistIds = state.wishlistIds.filter(id => id !== productId);
+        }
+      });
   },
 });
 
-export const { toggleWishlist, toggleFavorite, clearWishlist, clearFavorites } = wishlistSlice.actions;
-
+export const { clearWishlist } = wishlistSlice.actions;
 export default wishlistSlice.reducer;

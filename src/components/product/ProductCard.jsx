@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HiHeart, HiOutlineHeart, HiOutlineMapPin, HiOutlineClock } from 'react-icons/hi2';
 import Badge from '../common/Badge';
 import { formatPrice, timeAgo } from '../../utils/helpers';
-import { toggleWishlist } from '../../store/wishlistSlice';
+import { toggleWishlistAPI } from '../../store/wishlistSlice';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ const ProductCard = ({ product }) => {
       navigate('/login');
       return;
     }
-    dispatch(toggleWishlist(product.id));
+    dispatch(toggleWishlistAPI(product.id));
   };
 
   return (
@@ -48,6 +48,16 @@ const ProductCard = ({ product }) => {
           {product.isFeatured && (
             <Badge variant="warning" className="shadow-sm shadow-warning-500/20 backdrop-blur-md bg-warning-500/90 text-white border-none">
               Featured
+            </Badge>
+          )}
+          {product.status === 'pending' && (
+            <Badge variant="warning" className="shadow-sm backdrop-blur-md bg-warning-500/90 text-white border-none">
+              Pending Approval
+            </Badge>
+          )}
+          {product.status === 'rejected' && (
+            <Badge variant="danger" className="shadow-sm backdrop-blur-md bg-danger-500/90 text-white border-none">
+              Rejected
             </Badge>
           )}
           <Badge 

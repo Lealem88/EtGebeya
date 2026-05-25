@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineBell, HiOutlineCheck, HiOutlineTrash } from 'react-icons/hi2';
-import { markAsRead, markAllAsRead, removeNotification } from '../../store/notificationSlice';
+import { markAsReadAPI, markAllAsReadAPI, removeNotificationAPI } from '../../store/notificationSlice';
 import { timeAgo, formatDate } from '../../utils/helpers';
 import Button from '../../components/common/Button';
 import EmptyState from '../../components/common/EmptyState';
@@ -33,7 +33,7 @@ const NotificationsPage = () => {
         {items.length > 0 && (
           <Button 
             variant="outline" 
-            onClick={() => dispatch(markAllAsRead())}
+            onClick={() => dispatch(markAllAsReadAPI())}
             disabled={unreadCount === 0}
             icon={HiOutlineCheck}
           >
@@ -72,7 +72,7 @@ const NotificationsPage = () => {
                 <div className="flex flex-col gap-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                   {!notification.read && (
                     <button
-                      onClick={() => dispatch(markAsRead(notification.id))}
+                      onClick={() => dispatch(markAsReadAPI(notification.id))}
                       className="p-2 text-surface-400 hover:text-primary-600 dark:hover:text-primary-400 bg-surface-100 dark:bg-surface-800 rounded-lg"
                       title="Mark as read"
                     >
@@ -80,7 +80,7 @@ const NotificationsPage = () => {
                     </button>
                   )}
                   <button
-                    onClick={() => dispatch(removeNotification(notification.id))}
+                    onClick={() => dispatch(removeNotificationAPI(notification.id))}
                     className="p-2 text-surface-400 hover:text-danger-500 bg-surface-100 dark:bg-surface-800 rounded-lg"
                     title="Delete"
                   >

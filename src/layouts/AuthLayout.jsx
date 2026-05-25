@@ -1,6 +1,5 @@
-import { Outlet } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import { HiOutlineShoppingCart } from 'react-icons/hi2';
+import { Outlet, Link } from 'react-router-dom';
+import { HiOutlineBuildingStorefront } from 'react-icons/hi2';
 
 /**
  * AuthLayout — Centered layout for login/register/forgot-password pages
@@ -17,12 +16,14 @@ const AuthLayout = () => {
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
-        <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-            <HiOutlineShoppingCart className="w-6 h-6 text-primary-600" />
-          </div>
-          <span className="text-2xl font-bold text-white">ElectroMart</span>
-        </Link>
+          <Link to="/" className="inline-flex items-center gap-2 group mb-8">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+              <HiOutlineBuildingStorefront className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-surface-900 to-surface-700 dark:from-white dark:to-surface-300 bg-clip-text text-transparent group-hover:from-primary-600 group-hover:to-primary-800 transition-all duration-300">
+              EtGebeya
+            </span>
+          </Link>
 
         {/* Auth Card */}
         <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl p-8 animate-scale-in">
@@ -31,7 +32,7 @@ const AuthLayout = () => {
 
         {/* Footer */}
         <p className="text-center text-white/60 text-sm mt-6">
-          © 2026 ElectroMart. All rights reserved.
+          © 2026 EtGebeya. All rights reserved.
         </p>
       </div>
     </div>

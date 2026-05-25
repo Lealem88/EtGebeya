@@ -1,117 +1,57 @@
-import sellersData from '../data/sellers.json';
+import api from './api';
 
 /**
- * Auth Service — Mock API calls for authentication
- * 
- * BACKEND INTEGRATION NOTE:
- * Replace these mock functions with actual Axios calls:
- * - POST /api/login      → authService.login(email, password)
- * - POST /api/register   → authService.register(userData)
- * - POST /api/forgot-password → authService.forgotPassword(email)
- * - GET /api/user/profile → authService.getProfile()
- * - PUT /api/user/profile → authService.updateProfile(data)
+ * Auth Service — API calls for authentication
  */
 
-// Simulate API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 const authService = {
-  /**
-   * Login with email and password
-   * @param {string} email 
-   * @param {string} password 
-   * @returns {Promise<Object>} User data with token
-   */
   async login(email, password) {
-    await delay(800);
-    
-    // Mock: find user by email
-    const user = sellersData.find(u => u.email === email);
-    
-    if (!user) {
-      throw new Error('Invalid email or password');
+    const response = await api.post('/auth/login.php', { email, password });
+    if (response.data.success) {
+      localStorage.setItem('user', JSON.stringify(response.data.data));
+      return response.data.data;
     }
-    
-    // Mock: any password works for demo
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar,
-      phone: user.phone,
-      location: user.location,
-      joinDate: user.joinDate,
-      bio: user.bio,
-      trustScore: user.trustScore,
-      isVerified: user.isVerified,
-      token: 'mock_jwt_token_' + user.id,
-    };
+    throw new Error(response.data.message || 'Login failed');
   },
 
-  /**
-   * Register a new user
-   * @param {Object} userData - { name, email, password, phone, location }
-   * @returns {Promise<Object>} User data with token
-   */
   async register(userData) {
-    await delay(1000);
-    
-    // Mock: check if email exists
-    const existing = sellersData.find(u => u.email === userData.email);
-    if (existing) {
-      throw new Error('Email already registered');
+    const response = await api.post('/auth/register.php', userData);
+    if (response.data.success) {
+      localStorage.setItem('user', JSON.stringify(response.data.data));
+      return response.data.data;
     }
-    
-    return {
-      id: Date.now(),
-      name: userData.name,
-      email: userData.email,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=3b82f6&color=fff`,
-      phone: userData.phone || '',
-      location: userData.location || '',
-      joinDate: new Date().toISOString().split('T')[0],
-      bio: '',
-      trustScore: 5.0,
-      isVerified: false,
-      token: 'mock_jwt_token_new_' + Date.now(),
-    };
+    throw new Error(response.data.message || 'Registration failed');
   },
 
-  /**
-   * Request password reset
-   * @param {string} email 
-   * @returns {Promise<Object>} Success message
-   */
   async forgotPassword(email) {
-    await delay(800);
-    
-    return {
-      message: 'Password reset link sent to your email address.',
-    };
+    const response = await api.post('/auth/forgot-password.php', { email });
+    if (response.data.success) {
+      return response.data;
+    }
+    throw new Error(response.data.message || 'Request failed');
   },
 
-  /**
-   * Get current user profile
-   * @returns {Promise<Object>} User profile data
-   */
   async getProfile() {
-    await delay(500);
-    const user = localStorage.getItem('user');
-    if (!user) throw new Error('Not authenticated');
-    return JSON.parse(user);
+    const response = await api.get('/auth/profile.php');
+    if (response.data.success) {
+      // Update local storage just in case
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      const updatedUser = { ...currentUser, ...response.data.data };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    }
+    throw new Error(response.data.message || 'Failed to fetch profile');
   },
 
-  /**
-   * Update user profile
-   * @param {Object} data - Fields to update
-   * @returns {Promise<Object>} Updated user data
-   */
   async updateProfile(data) {
-    await delay(600);
-    const user = JSON.parse(localStorage.getItem('user'));
-    const updated = { ...user, ...data };
-    localStorage.setItem('user', JSON.stringify(updated));
-    return updated;
+    const response = await api.put('/auth/profile.php', data);
+    if (response.data.success) {
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      const updatedUser = { ...currentUser, ...response.data.data };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    }
+    throw new Error(response.data.message || 'Failed to update profile');
   },
 };
 

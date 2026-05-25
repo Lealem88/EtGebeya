@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { HiOutlineCheck, HiOutlineTrash } from 'react-icons/hi2';
-import { markAsRead, markAllAsRead, removeNotification } from '../../store/notificationSlice';
+import { markAsReadAPI, markAllAsReadAPI, removeNotificationAPI } from '../../store/notificationSlice';
 import { timeAgo } from '../../utils/helpers';
 
 const NotificationDropdown = ({ onClose }) => {
@@ -11,13 +11,13 @@ const NotificationDropdown = ({ onClose }) => {
   const handleMarkAsRead = (e, id) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(markAsRead(id));
+    dispatch(markAsReadAPI(id));
   };
 
   const handleDelete = (e, id) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(removeNotification(id));
+    dispatch(removeNotificationAPI(id));
   };
 
   return (
@@ -27,7 +27,7 @@ const NotificationDropdown = ({ onClose }) => {
         <h3 className="font-semibold text-surface-900 dark:text-white">Notifications</h3>
         {items.length > 0 && (
           <button
-            onClick={() => dispatch(markAllAsRead())}
+            onClick={() => dispatch(markAllAsReadAPI())}
             className="text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
           >
             Mark all as read
@@ -42,11 +42,18 @@ const NotificationDropdown = ({ onClose }) => {
             {items.map((notification) => (
               <div
                 key={notification.id}
-                className={`p-4 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors group ${
+                onClick={(e) => {
+                  if (!notification.read) handleMarkAsRead(e, notification.id);
+                  onClose();
+                }}
+                className={`p-4 hover:bg-surface-50 dark:hover:bg-surface-700/50 transition-colors group cursor-pointer ${
                   !notification.read ? 'bg-primary-50/50 dark:bg-primary-900/10' : ''
                 }`}
               >
-                <div className="flex gap-3">
+                <Link 
+                  to={notification.type === 'message' ? '/messages' : '/notifications'} 
+                  className="flex gap-3"
+                >
                   <div className="text-2xl mt-0.5 shrink-0">{notification.icon}</div>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm ${!notification.read ? 'font-semibold text-surface-900 dark:text-white' : 'font-medium text-surface-700 dark:text-surface-300'}`}>
@@ -78,7 +85,7 @@ const NotificationDropdown = ({ onClose }) => {
                       <HiOutlineTrash className="w-4 h-4" />
                     </button>
                   </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>

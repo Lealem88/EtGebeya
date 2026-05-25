@@ -1,9 +1,12 @@
 import { HiStar, HiOutlineStar } from 'react-icons/hi2';
 
 /**
- * Reusable Rating Component
+ * Reusable Rating Component - null-safe version
  */
 const Rating = ({ value, count, size = 'sm', showValue = false }) => {
+  // If count is explicitly 0, the value is effectively 0 for display purposes
+  const safeValue = count === 0 ? 0 : (Number(value) || 0);
+
   const sizes = {
     sm: 'w-3.5 h-3.5',
     md: 'w-4 h-4',
@@ -11,8 +14,8 @@ const Rating = ({ value, count, size = 'sm', showValue = false }) => {
   };
 
   const iconClass = sizes[size];
-  const fullStars = Math.floor(value);
-  const hasHalfStar = value % 1 >= 0.5;
+  const fullStars = Math.floor(safeValue);
+  const hasHalfStar = safeValue % 1 >= 0.5;
 
   return (
     <div className="flex items-center gap-1.5">
@@ -37,8 +40,9 @@ const Rating = ({ value, count, size = 'sm', showValue = false }) => {
       
       {(showValue || count !== undefined) && (
         <div className="flex items-center gap-1 text-sm">
-          {showValue && <span className="font-medium text-surface-900 dark:text-white">{value.toFixed(1)}</span>}
-          {count !== undefined && <span className="text-surface-500">({count})</span>}
+          {showValue && count > 0 && <span className="font-medium text-surface-900 dark:text-white">{safeValue.toFixed(1)}</span>}
+          {showValue && count === 0 && <span className="font-medium text-surface-500">No ratings</span>}
+          {count !== undefined && count > 0 && <span className="text-surface-500">({count})</span>}
         </div>
       )}
     </div>

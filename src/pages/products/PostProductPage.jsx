@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { HiOutlineArrowLeft, HiOutlineArrowRight, HiOutlineCamera, HiOutlineCheck, HiOutlineXMark, HiOutlinePhoto, HiOutlineExclamationTriangle } from 'react-icons/hi2';
+import { HiOutlineArrowLeft, HiOutlineArrowRight, HiOutlineCamera, HiOutlineCheck, HiOutlineXMark, HiOutlinePhoto, HiOutlineExclamationTriangle, HiOutlineMapPin, HiOutlineSparkles } from 'react-icons/hi2';
 import { toast } from 'react-hot-toast';
 
 import Button from '../../components/common/Button';
@@ -34,7 +34,7 @@ const PostProductPage = () => {
     category: '',
     brand: '',
     model: '',
-    images: [], // store ObjectURLs for preview
+    images: [], // store objects { file, preview }
     title: '',
     description: '',
     price: '',
@@ -67,8 +67,11 @@ const PostProductPage = () => {
     // Simulate camera-only restriction message
     toast('Make sure these are real photos taken by you', { icon: '📸' });
 
-    // Create Object URLs for preview
-    const newImages = files.map(file => URL.createObjectURL(file));
+    // Store both the File object and the preview URL
+    const newImages = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
     setFormData(prev => ({ ...prev, images: [...prev.images, ...newImages] }));
   };
 
@@ -76,7 +79,9 @@ const PostProductPage = () => {
     setFormData(prev => {
       const updated = [...prev.images];
       // Revoke object URL to prevent memory leaks
-      URL.revokeObjectURL(updated[index]);
+      if (updated[index].preview) {
+        URL.revokeObjectURL(updated[index].preview);
+      }
       updated.splice(index, 1);
       return { ...prev, images: updated };
     });
@@ -118,7 +123,7 @@ const PostProductPage = () => {
         if (!formData.brand) { toast.error('Please select a brand'); return false; }
         return true;
       case 3:
-        if (formData.images.length < 5) { toast.error('Please upload at least 5 photos'); return false; }
+        if (formData.images.length < 1) { toast.error('Please upload at least 1 photo'); return false; }
         return true;
       case 4:
         if (!formData.title.trim()) { toast.error('Title is required'); return false; }
@@ -148,30 +153,31 @@ const PostProductPage = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Create new product payload
-      const payload = {
-        title: formData.title,
-        description: formData.description,
-        price: Number(formData.price),
-        category: formData.category,
-        brand: formData.brand,
-        model: formData.model || formData.title,
-        condition: formData.condition,
-        // In a real app, these would be uploaded URLs from a CDN (S3/Cloudinary)
-        // For the mockup, we'll use placeholder images if object URLs fail
-        images: formData.images.length > 0 ? formData.images : ["https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=800"],
-        specs: formData.specs,
-        features: formData.features,
-        sellerId: user.id,
-        location: formData.location,
-      };
+      const data = new FormData();
+      data.append('title', formData.title);
+      data.append('description', formData.description);
+      data.append('price', formData.price);
+      data.append('category', formData.category);
+      data.append('brand', formData.brand);
+      data.append('model', formData.model || formData.title);
+      data.append('condition', formData.condition);
+      data.append('location', formData.location);
+      data.append('specs', JSON.stringify(formData.specs));
+      data.append('features', JSON.stringify(formData.features));
+      
+      formData.images.forEach(img => {
+        if (img.file) {
+          data.append('images[]', img.file);
+        }
+      });
 
-      const newProduct = await productService.create(payload);
+      const newProduct = await productService.create(data);
       dispatch(addProduct(newProduct));
       toast.success('Product listed successfully!');
       navigate(`/products/${newProduct.id}`);
     } catch (error) {
-      toast.error('Failed to post product');
+      const message = error.response?.data?.message || 'Failed to post product';
+      toast.error(message);
       setIsSubmitting(false);
     }
   };
@@ -249,7 +255,7 @@ const PostProductPage = () => {
               <div>
                 <p className="font-semibold text-warning-800 dark:text-warning-400">Photo Requirements</p>
                 <p className="text-sm text-warning-700 dark:text-warning-500 mt-1">
-                  You must upload at least 5 photos. Only photos taken directly from your phone camera are allowed to ensure authenticity.
+                  You must upload at least 1 photo. Only photos taken directly from your phone camera are allowed to ensure authenticity.
                 </p>
               </div>
             </div>
@@ -280,7 +286,7 @@ const PostProductPage = () => {
               {/* Previews */}
               {formData.images.map((img, idx) => (
                 <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden group border border-surface-200 dark:border-surface-700">
-                  <img src={img} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                  <img src={img.preview} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
                   <button
                     onClick={() => removePhoto(idx)}
                     className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-danger-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all"
@@ -297,7 +303,7 @@ const PostProductPage = () => {
             </div>
 
             <p className="text-sm text-surface-500 font-medium">
-              {formData.images.length} / 10 photos uploaded (Minimum 5 required)
+              {formData.images.length} / 10 photos uploaded (Minimum 1 required)
             </p>
           </div>
         );
@@ -321,14 +327,14 @@ const PostProductPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="relative">
                   <Input
-                    label="Price ($) *"
+                    label="Price (ETB) *"
                     name="price"
                     type="number"
                     value={formData.price}
                     onChange={handleInputChange}
-                    placeholder="0.00"
+                    placeholder="0"
                     min="0"
-                    step="0.01"
+                    step="1"
                   />
                 </div>
                 <div>
@@ -376,7 +382,45 @@ const PostProductPage = () => {
             {/* Dynamic Specs */}
             {specFields.length > 0 && (
               <div className="pt-6 border-t border-surface-200 dark:border-surface-800">
-                <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-4">Specifications</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-white">Specifications</h3>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!formData.title || !formData.description) {
+                        toast.error('Please enter title and description first');
+                        return;
+                      }
+                      const toastId = toast.loading('Extracting specs with AI...');
+                      try {
+                        // Assuming api is imported from '../../services/api'
+                        const api = (await import('../../services/api')).default;
+                        const response = await api.post('/ai/analyze_product.php', {
+                          title: formData.title,
+                          description: formData.description,
+                          category: formData.category
+                        });
+                        
+                        if (response.data?.success && response.data.data.extractedSpecs) {
+                          const extracted = response.data.data.extractedSpecs;
+                          setFormData(prev => ({
+                            ...prev,
+                            specs: { ...prev.specs, ...extracted }
+                          }));
+                          toast.success('Specs auto-filled successfully!', { id: toastId });
+                        } else {
+                          toast.error('Could not extract specs', { id: toastId });
+                        }
+                      } catch (err) {
+                        toast.error('AI extraction failed', { id: toastId });
+                      }
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 text-xs font-bold rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"
+                  >
+                    <HiOutlineSparkles className="w-4 h-4" />
+                    Auto-fill with AI
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {specFields.map(spec => (
                     <div key={spec}>
@@ -408,7 +452,7 @@ const PostProductPage = () => {
             <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden shadow-sm">
               <div className="aspect-[21/9] bg-surface-100 dark:bg-surface-800 relative">
                 {formData.images.length > 0 ? (
-                  <img src={formData.images[0]} alt="Cover" className="w-full h-full object-cover" />
+                  <img src={formData.images[0].preview} alt="Cover" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <HiOutlinePhoto className="w-12 h-12 text-surface-300" />

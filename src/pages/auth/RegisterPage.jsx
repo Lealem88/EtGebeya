@@ -84,7 +84,7 @@ const RegisterPage = () => {
           Create Account
         </h1>
         <p className="text-surface-500 dark:text-surface-400 text-sm">
-          Join ElectroMart to buy and sell electronics
+          Join EtGebeya to buy and sell electronics
         </p>
       </div>
 

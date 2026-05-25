@@ -1,31 +1,23 @@
-/**
- * Wishlist Service — Mock API calls
- * 
- * BACKEND INTEGRATION NOTE:
- * Replace with:
- * - GET /api/wishlist       → wishlistService.getAll()
- * - POST /api/wishlist      → wishlistService.add(productId)
- * - DELETE /api/wishlist/:id → wishlistService.remove(productId)
- */
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import api from './api';
 
 const wishlistService = {
-  async getAll() {
-    await delay(400);
-    const wishlist = localStorage.getItem('wishlist');
-    return wishlist ? JSON.parse(wishlist) : [];
+  async getWishlist() {
+    const response = await api.get('/wishlist/index.php');
+    if (response.data.success) return response.data.data;
+    throw new Error(response.data.message || 'Failed to fetch wishlist');
   },
 
-  async add(productId) {
-    await delay(200);
-    return { success: true, productId };
+  async toggleWishlist(productId) {
+    const response = await api.post('/wishlist/toggle.php', { productId });
+    if (response.data.success) return response.data.data;
+    throw new Error(response.data.message || 'Failed to toggle wishlist');
   },
 
-  async remove(productId) {
-    await delay(200);
-    return { success: true, productId };
-  },
+  async clearWishlist() {
+    const response = await api.delete('/wishlist/clear.php');
+    if (response.data.success) return response.data;
+    throw new Error(response.data.message || 'Failed to clear wishlist');
+  }
 };
 
 export default wishlistService;
