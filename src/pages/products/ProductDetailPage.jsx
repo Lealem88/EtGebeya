@@ -504,22 +504,24 @@ const ProductDetailPage = () => {
 
               {/* Contact via chat */}
               <div className="space-y-3">
-                <Button 
-                  variant="primary" 
-                  fullWidth 
-                  size="lg" 
-                  icon={HiOutlineChatBubbleLeftEllipsis}
-                  onClick={() => {
-                    if (!isAuthenticated) {
-                      toast.error('እባክዎ ይግቡ');
-                      navigate('/login');
-                      return;
-                    }
-                    toast.success('ከሻጩ ጋር ውይይት እየተከፈተ ነው...');
-                  }}
-                >
-                  ሻጩን አናግር — Contact Seller
-                </Button>
+                {seller && user?.id?.toString() !== seller.id?.toString() && (
+                  <Button 
+                    variant="primary" 
+                    fullWidth 
+                    size="lg" 
+                    icon={HiOutlineChatBubbleLeftEllipsis}
+                    onClick={() => {
+                      if (!isAuthenticated) {
+                        toast.error('እባክዎ ይግቡ');
+                        navigate('/login');
+                        return;
+                      }
+                      navigate(`/messages?user_id=${seller.id}&product_id=${product.id}`);
+                    }}
+                  >
+                    ሻጩን አናግር — Contact Seller
+                  </Button>
+                )}
 
                 {/* AI Negotiate Button — only show to non-owner */}
                 {seller && user?.id?.toString() !== seller.id?.toString() && (
