@@ -20,3 +20,4 @@ Add error handling to user registration
 Initial setup for email notifications
 Update README with new usage examples
 Fix bug in the authentication middleware
+Refactor database connection logic
