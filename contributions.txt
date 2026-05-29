@@ -18,3 +18,4 @@ Update color scheme for primary buttons
 Fix broken navigation links
 Add error handling to user registration
 Initial setup for email notifications
+Update README with new usage examples
