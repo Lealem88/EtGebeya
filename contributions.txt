@@ -29,3 +29,4 @@ Add unit tests for the utility functions
 Update database schema for new features
 Remove deprecated API endpoints
 Fix alignment issue on the dashboard
+Add sorting functionality to data tables
