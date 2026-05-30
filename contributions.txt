@@ -31,3 +31,4 @@ Remove deprecated API endpoints
 Fix alignment issue on the dashboard
 Add sorting functionality to data tables
 Improve error handling in form submissions
+Update API rate limiting rules
