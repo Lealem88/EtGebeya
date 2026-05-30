@@ -24,3 +24,4 @@ Refactor database connection logic
 Add logging for unhandled exceptions
 Optimize CSS for faster load times
 Update dependency lockfile
+Fix typo in the user profile template
