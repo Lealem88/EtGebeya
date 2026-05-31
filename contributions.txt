@@ -36,3 +36,4 @@ Fix edge case in the billing module
 Add new webhook integration
 Update colors to match new brand guidelines
 Fix broken link in the footer menu
+Add validation to user registration form
