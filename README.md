@@ -1,16 +1,53 @@
-# React + Vite
+# 🛒 etgebeya | Intelligent Full-Stack E-Commerce Marketplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**etgebeye** is a high-performance, modern e-commerce ecosystem designed to deliver fluid digital commerce experiences. The platform combines a responsive frontend with a secure relational backend and an integrated Machine Learning engine to drive personalized product recommendations and intelligent inventory insights.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Architectural Overview
 
-## React Compiler
+The application is built using a decoupled, production-grade architecture:
+* **Frontend UI/UX:** React powered by Tailwind CSS v4, employing a sleek glassmorphism design language, strict reactive state management, and fully fluid layouts.
+* **Backend API & Database:** PHP handling secure server-side logic, routing, user authentication, and dynamic inventory processing backed by a highly optimized MySQL relational schema.
+* **Intelligence Layer (ML):** A Python-based microservice that analyzes user browse-and-purchase histories to serve personalized collaborative filtering recommendations through API endpoints.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack & Tooling
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Layer | Technologies Used |
+| :--- | :--- |
+| **Frontend** | React, Tailwind CSS v4, JavaScript (ES6+), Axios |
+| **Backend** | PHP, RESTful API Architecture |
+| **Database** | MySQL, Relational Schema Optimization |
+| **Machine Learning** | Python, Pandas, Scikit-Learn (Implicit/Explicit Feedback Models) |
+| **Workflow** | Git, GitHub, Component-Driven Development |
+
+---
+
+## ✨ Core Engineering Features
+
+* **Advanced Feature Engineering & ML Discovery:** Integrates an intelligent recommendation system that calculates user-to-item similarity matrices, automatically prioritizing high-affinity items on the user's home feed.
+* **Next-Gen Glassmorphic Interface:** Fully responsive layouts built using Tailwind CSS v4’s updated compilation engine, prioritizing swift render cycles and modern aesthetic depth.
+* **Optimized Persistent Layer:** Relational database architecture configured with proper indexing to support low-latency search queries, real-time inventory adjustments, and secure user data storage.
+* **State-Driven Cart & Checkout:** Lightweight, reactive client-side context tracking that handles instantaneous updates without breaking state boundaries.
+
+---
+
+## 📁 Repository Structure
+
+```text
+etgebeye/
+├── config/
+│   └── database.sql       # Optimized relational MySQL schema
+├── backend/
+│   ├── auth/              # User validation and token processing
+│   ├── api/               # RESTful endpoints handling product queries
+│   └── index.php          # Primary backend entry point
+├── ai_engine/
+│   ├── recommend.py       # Python ML recommendation engine 
+│   └── dataset_builder.py # Data engineering & log aggregation pipeline
+└── frontend/
+    ├── src/               # React components, contexts, and hooks
+    ├── package.json       # Frontend tracking dependencies
+    └── tailwind.config.js # Tailwind CSS configuration
