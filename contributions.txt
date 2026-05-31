@@ -34,3 +34,4 @@ Improve error handling in form submissions
 Update API rate limiting rules
 Fix edge case in the billing module
 Add new webhook integration
+Update colors to match new brand guidelines
