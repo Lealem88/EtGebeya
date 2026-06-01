@@ -7,3 +7,4 @@ Update npm dependencies to latest versions
 Fix typo in response message
 Add unit tests for payment processing
 Update schema for user profiles
+Clean up unused variables and imports
