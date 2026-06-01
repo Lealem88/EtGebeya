@@ -44,3 +44,4 @@ Fix memory leak in the background worker
 Add internationalization support
 Update font weights for headings
 Fix cross-browser compatibility issues
+Add end-to-end tests for checkout flow
