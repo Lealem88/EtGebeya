@@ -10,7 +10,8 @@ if (file_exists($localEnvPath)) {
 
 // Fallback if not defined in env.local.php
 if (!defined('GEMINI_API_KEY')) {
-    define('GEMINI_API_KEY', 'put_your_api_key_here');
+    $envKey = getenv('GEMINI_API_KEY');
+    define('GEMINI_API_KEY', $envKey ? $envKey : 'put_your_api_key_here');
 }
 
 // Other global configs

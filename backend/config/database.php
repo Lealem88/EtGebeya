@@ -3,11 +3,18 @@
 
 class Database {
     // Database credentials
-    private $host = "localhost";
-    private $db_name = "electromart_db";
-    private $username = "root";
-    private $password = ""; // Default XAMPP password is empty
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
     public $conn;
+
+    public function __construct() {
+        $this->host = getenv('DB_HOST') ?: "localhost";
+        $this->db_name = getenv('DB_NAME') ?: "electromart_db";
+        $this->username = getenv('DB_USER') ?: "root";
+        $this->password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : "";
+    }
 
     // Get database connection
     public function getConnection() {
