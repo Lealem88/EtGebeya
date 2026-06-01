@@ -51,3 +51,4 @@ etgebeye/
     ├── src/               # React components, contexts, and hooks
     ├── package.json       # Frontend tracking dependencies
     └── tailwind.config.js # Tailwind CSS configuration
+ 
