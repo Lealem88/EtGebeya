@@ -9,3 +9,4 @@ Add unit tests for payment processing
 Update schema for user profiles
 Clean up unused variables and imports
 Fix bug in shopping cart total calculation
+Add pagination to the orders page
