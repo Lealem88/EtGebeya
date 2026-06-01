@@ -47,3 +47,4 @@ Fix cross-browser compatibility issues
 Add end-to-end tests for checkout flow
 Optimize SQL queries for report generation
 Update cache expiration policy
+Fix missing icon in the navigation bar
