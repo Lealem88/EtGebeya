@@ -4,6 +4,7 @@
 class Database {
     // Database credentials
     private $host;
+    private $port;
     private $db_name;
     private $username;
     private $password;
@@ -11,6 +12,7 @@ class Database {
 
     public function __construct() {
         $this->host = getenv('DB_HOST') ?: "localhost";
+        $this->port = getenv('DB_PORT') ?: "3306";
         $this->db_name = getenv('DB_NAME') ?: "electromart_db";
         $this->username = getenv('DB_USER') ?: "root";
         $this->password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : "";
@@ -22,7 +24,7 @@ class Database {
 
         try {
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=utf8mb4",
+                "mysql:host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->db_name . ";charset=utf8mb4",
                 $this->username,
                 $this->password
             );
