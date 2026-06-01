@@ -20,10 +20,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Enable Apache mod_rewrite so React's frontend routing works flawlessly
-RUN a2enmod rewrite
+RUN a2enmod rewrite && a2enmod headers
 
-# Configure Apache to listen on the dynamic PORT assigned by Render
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+# Enable AllowOverride so .htaccess rules are respected
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 # Set working directory to Apache document root
 WORKDIR /var/www/html
@@ -41,3 +41,9 @@ RUN if [ -f /var/www/html/requirements.txt ]; then \
 
 # Set correct permissions for Apache
 RUN chown -R www-data:www-data /var/www/html
+
+# Use a startup script to set the PORT at runtime before starting Apache
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
