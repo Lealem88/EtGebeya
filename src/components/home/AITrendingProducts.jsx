@@ -42,7 +42,7 @@ const AITrendingProducts = () => {
   if (!data.products.length) return null;
 
   return (
-    <section className="py-12 bg-white dark:bg-surface-900">
+    <section className="py-12 border-t border-surface-200/50 dark:border-surface-800/50">
       <div className="max-w-7xl mx-auto px-4">
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">

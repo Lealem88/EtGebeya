@@ -401,7 +401,7 @@ const PostProductPage = () => {
                           category: formData.category
                         });
                         
-                        if (response.data?.success && response.data.data.extractedSpecs) {
+                        if (response.data?.success && response.data?.data?.extractedSpecs) {
                           const extracted = response.data.data.extractedSpecs;
                           setFormData(prev => ({
                             ...prev,
@@ -409,10 +409,10 @@ const PostProductPage = () => {
                           }));
                           toast.success('Specs auto-filled successfully!', { id: toastId });
                         } else {
-                          toast.error('Could not extract specs', { id: toastId });
+                          toast.error('AI could not extract specs. Try providing more details.', { id: toastId });
                         }
                       } catch (err) {
-                        toast.error('AI extraction failed', { id: toastId });
+                        toast.error('AI extraction failed. Please fill manually.', { id: toastId });
                       }
                     }}
                     className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 text-xs font-bold rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"

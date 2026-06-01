@@ -107,8 +107,8 @@ const ProductCard = ({ product }) => {
               <HiOutlineClock className="w-3.5 h-3.5 shrink-0" />
               <span>{timeAgo(product.postedAt)}</span>
             </div>
-            <span className="font-medium text-surface-600 dark:text-surface-300">
-              Seller #{product.sellerId}
+            <span className="font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wide">
+              {product.condition}
             </span>
           </div>
         </div>
