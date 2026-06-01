@@ -12,3 +12,4 @@ Fix bug in shopping cart total calculation
 Add pagination to the orders page
 Optimize lazy loading for images
 Update setup instructions in README
+Fix edge case in password reset flow
