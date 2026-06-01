@@ -14,3 +14,4 @@ Optimize lazy loading for images
 Update setup instructions in README
 Fix edge case in password reset flow
 Add new feature for wishlist management
+Update color scheme for primary buttons
