@@ -41,3 +41,4 @@ Initial setup for the analytics dashboard
 Refactor state management in the frontend
 Update CI/CD pipeline configuration
 Fix memory leak in the background worker
+Add internationalization support
