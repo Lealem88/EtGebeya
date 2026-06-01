@@ -6,3 +6,4 @@ Improve performance of database queries
 Update npm dependencies to latest versions
 Fix typo in response message
 Add unit tests for payment processing
+Update schema for user profiles
