@@ -1,25 +1,43 @@
-# 1. Use the official PHP image with Apache pre-installed
+# Stage 1: Build the React frontend
+FROM node:20 AS build
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci
+
+# Copy the rest of the frontend source code and build
+COPY . .
+RUN npm run build
+
+# Stage 2: Setup PHP, Apache, and Python
 FROM php:8.2-apache
 
-# 2. Install Python inside the same container
+# Install Python inside the same container
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# 3. Enable Apache mod_rewrite so React's frontend routing works flawlessly
+# Enable Apache mod_rewrite so React's frontend routing works flawlessly
 RUN a2enmod rewrite
 
-# 4. Copy your compiled React static files, PHP code, and Python scripts
-COPY . /var/www/html/
+# Configure Apache to listen on the dynamic PORT assigned by Render
+RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
-# 5. Install your Python AI dependencies if you have a requirements.txt file
+# Set working directory to Apache document root
+WORKDIR /var/www/html
+
+# Copy the compiled React static files from the build stage
+COPY --from=build /app/dist/ ./
+
+# Copy the PHP backend code
+COPY backend/ ./backend/
+
+# Install your Python AI dependencies if you have a requirements.txt file
 RUN if [ -f /var/www/html/requirements.txt ]; then \
     pip3 install --no-cache-dir --break-system-packages -r /var/www/html/requirements.txt; \
     fi
 
-# 6. Set correct permissions for Apache
+# Set correct permissions for Apache
 RUN chown -R www-data:www-data /var/www/html
-
-# 7. Expose port 80 for web traffic
-EXPOSE 80
