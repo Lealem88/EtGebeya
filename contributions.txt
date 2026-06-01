@@ -43,3 +43,4 @@ Update CI/CD pipeline configuration
 Fix memory leak in the background worker
 Add internationalization support
 Update font weights for headings
+Fix cross-browser compatibility issues
