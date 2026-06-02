@@ -2,3 +2,4 @@ Update documentation for API endpoints
 Refactor product service methods
 Fix styling issues on mobile view
 Add logging for authentication errors
+Improve performance of database queries
