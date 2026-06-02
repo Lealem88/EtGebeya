@@ -1,1 +1,2 @@
 Update documentation for API endpoints
+Refactor product service methods
